@@ -6,7 +6,7 @@ class EventCalendar
 {
     public $aula;
     public $days;
-    public $start_day;
+    public $start_date;
     public $end_date;
     public $start_at;
     public $end_at;

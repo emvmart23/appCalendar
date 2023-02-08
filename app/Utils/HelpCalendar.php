@@ -6,6 +6,7 @@ use App\Event\EventCalendar;
 use DateInterval;
 use DateTime;
 use DateTimeZone;
+use Exception;
 
 class HelpCalendar {
     function transformDay($day):string
@@ -71,7 +72,7 @@ class HelpCalendar {
 
                 foreach ($generated_event->days as $day) {
                     $dayOfWeek = $this->transformDay($day);
-                    $generated_event->start_day = date('Y-m-d', strtotime("next $dayOfWeek -1 day", strtotime($start_day->format('Y-m-d'))));
+                    $generated_event->start_date = date('Y-m-d', strtotime("next $dayOfWeek -1 day", strtotime($start_day->format('Y-m-d'))));
                     $generated_event->end_date = date('Y-m-d', strtotime("next $dayOfWeek", strtotime($start_day->format('Y-m-d ' . $generated_event->end_at))));
                     unset($generated_event->days);
                     $generated_events[] = $generated_event;

@@ -11,4 +11,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/calcular', [CalendarController::class,'calcular']);
 
+
 Route::resource('/events', EventsController::class);
+
