@@ -32,7 +32,6 @@ class CalendarController extends Controller
                         $event->title = $read_data[7];
                         $event->description = $read_data[8];
                         $event->event_id = $read_data[9];
-                        //$array_result = array_merge($array_result, [$event]);
                         $array_result[] = $event;
                     }
                 }

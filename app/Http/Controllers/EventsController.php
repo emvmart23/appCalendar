@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Events;
 use App\Http\Requests\StoreEventsRequest;
 use App\Http\Requests\UpdateEventsRequest;
+use App\Utils\HelpCalendar;
+use http\Env\Request;
 
 class EventsController extends Controller
 {
@@ -37,12 +39,14 @@ class EventsController extends Controller
      * @param  \App\Http\Requests\StoreEventsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEventsRequest $request)
+    public function store(\Illuminate\Http\Request $request)
     {
-        $event = Events::create($request->all());
+        $data = $request->all();
+        $event = Events::create($data);
+	    $even_dates = HelpCalendar::calculateEvents($event,'America/Lima','UTC');
         return response()->json([
             'status' => 'ok',
-            'data' => $event,
+            'data' => $even_dates
         ]);
     }
 

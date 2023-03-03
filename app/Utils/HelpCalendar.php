@@ -9,7 +9,7 @@ use DateTimeZone;
 use Exception;
 
 class HelpCalendar {
-    function transformDay($day):string
+    public static function transformDay ($day):string
     {
         $day = trim($day);
         switch ($day) {
@@ -35,29 +35,37 @@ class HelpCalendar {
     /**
      * @throws Exception
      */
-    function calculateEvents($event, $timezone_input, $timezone_output):array
+    public static function calculateEvents($event, $timezone_input, $timezone_output):array
     {
         $start_day = new DateTime($event->start_day, new DateTimeZone($timezone_input));
         $end_date = new DateTime($event->end_date, new DateTimeZone($timezone_input));
         $start_at = new DateTime($event->start_at, new DateTimeZone($timezone_input));
         $end_at = new DateTime($event->end_at, new DateTimeZone($timezone_input));
         $interval = new DateInterval('P1D');
-        $days = explode(',', $this->transformDay($event->days));
+        $days = explode(',',str_replace(' ','',$event->days));
+        $array_days = [];
+        foreach ($days as $day) {
+            array_push($array_days,self::transformDay($day));
+        }
         $event_id = $event->event_id;
 
         $generated_events = array();
 
-        // Set timezone for output
+
         $start_day->setTimezone(new DateTimeZone($timezone_output));
         $end_date->setTimezone(new DateTimeZone($timezone_output));
         $start_at->setTimezone(new DateTimeZone($timezone_output));
         $end_at->setTimezone(new DateTimeZone($timezone_output));
 
-        // Check if eventCalendar is within the selected days
-        while ($start_day <= $end_date) {
-            if (in_array($start_day->format('l'), $days)) {
+        $datetime1 = new DateTime($event->start_date);
+        $datetime2 = new DateTime($event->end_date);
+        $interval = $datetime2->diff($datetime1);
+        $days_number = $interval->format('%a');
+        $counter = 0;
+        while ($counter < $days_number) {
+            if (in_array($start_day->format('l'), $array_days)) {
                 $generated_event = new EventCalendar();
-                $generated_event->aula = $event->aula;
+                //$generated_event->aula = $event->aula;
                 $generated_event->days = explode(",", str_replace(" ", "", $event->days));
                 $generated_event->title = $event->title;
                 $generated_event->description = $event->description;
@@ -71,16 +79,17 @@ class HelpCalendar {
                 // array_push($generated_events, $generated_event);
 
                 foreach ($generated_event->days as $day) {
-                    $dayOfWeek = $this->transformDay($day);
+                    $dayOfWeek = self::transformDay($day);
                     $generated_event->start_date = date('Y-m-d', strtotime("next $dayOfWeek -1 day", strtotime($start_day->format('Y-m-d'))));
                     $generated_event->end_date = date('Y-m-d', strtotime("next $dayOfWeek", strtotime($start_day->format('Y-m-d ' . $generated_event->end_at))));
                     unset($generated_event->days);
                     $generated_events[] = $generated_event;
                 }
             }
-            $start_day->add($interval);
+           $counter++;
         }
         return $generated_events;
+
     }
 }
 

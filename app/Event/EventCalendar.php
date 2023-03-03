@@ -4,7 +4,6 @@ namespace App\Event;
 
 class EventCalendar
 {
-    public $aula;
     public $days;
     public $start_date;
     public $end_date;
